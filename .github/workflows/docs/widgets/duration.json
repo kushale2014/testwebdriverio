@@ -1,0 +1,21 @@
+[ {
+  "uid" : "f3f9330778682726",
+  "name" : "test sync",
+  "time" : {
+    "start" : 1631713303610,
+    "stop" : 1631713303632,
+    "duration" : 22
+  },
+  "status" : "broken",
+  "severity" : "normal"
+}, {
+  "uid" : "874add9cbc5a0765",
+  "name" : "should login with valid credentials",
+  "time" : {
+    "start" : 1631713304028,
+    "stop" : 1631713309727,
+    "duration" : 5699
+  },
+  "status" : "passed",
+  "severity" : "normal"
+} ]
