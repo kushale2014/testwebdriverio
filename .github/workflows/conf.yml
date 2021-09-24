@@ -1,54 +1,75 @@
-name: Main Github Actions
+name: Test and create report
+
 on:
   push:
-    branches:
-      - "master" # Set branch of the GH repo to push
+    branches: [ master ]
+  # pull_request:
+  #   branches: [ master ]
+
 jobs:
-  test_suite: testwebdriverio# Name of the job
+  Run_test:
     runs-on: ubuntu-20.04 # Choosing OS
+    strategy:
+      matrix:
+        node-version: [14.17.0]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
       with:
-        node-version: [14.17.0] # In command line run “node -v” and choose your version
-    - run: npm ci
-    #      - run: npm config set script-shell "C:\Program Files\Git\bin\bash.exe"
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+      # trying to install npm packages
+    - run: npm i -g npm@latest
+    - run: npm i npm@latest
+    - run: npm i
     - name: run test
-      run: npm run test:headless # Our name of the headless script
-    - name: Copy History
+      # trying to run tests
+      run: npm run test
+    - name: Copy backupHistory
       if: always()
-      run: cp -r $(pwd)/docs/history/. $(pwd)/allure-results/history
-    - name: Generate Report
+      # trying to save history screens and info of previous runs if it is exists
+      run: cp -r $(pwd)/docs/backupHistory/. $(pwd)/allure-results
+    - name: Create Report
       if: always()
-      run: npm run allure:generate # Name of the allure generate script
-    - name: Upload Results
+      # trying to save history of previous runs if it is exists
+      run: cp -r $(pwd)/docs/history/. $(pwd)/allure-results/history || true && npm run allure:generate
+    - name: Create bacup directory
+      if: always()
+      # trying to create backup directory
+      run: mkdir allure-report/backupHistory 
+    - name: Backup history tests
+      if: always()
+      # trying to backup screens and info test
+      run: cp -r $(pwd)/allure-results/*.* $(pwd)/allure-report/backupHistory
+    - name: Display structure of backup history files
+      if: always()
+      run: ls -R
+      working-directory: allure-report/backupHistory
+    - name: Upload artifact allure-report
       uses: actions/upload-artifact@v1
       if: always()
       with:
         name: allure-report
-        path: ./allure-report # Name of the folder with allure results
-    - name: Publishing Allure artifact to Github Actions
-      uses: actions/upload-artifact@v2
-      if: always()
-      with:
-        name: allure-report
-        path: allure-report
+        path: ./allure-report
     - name: Deploy report
-      uses: JamesIves/github-pages-deploy-action@4.1.4
+      uses: JamesIves/github-pages-deploy-action@3.1.0
       if: always()
       with:
-        ACCESS_TOKEN: ${{secrets.ACCESS_TOKEN}}
-        branch: master # The branch the action should deploy to.
-        folder: allure-report # The folder the action should deploy.
-        target-folder: docs
-    # - name: Pushes docs to another repository
-    #   uses: cpina/github-action-push-to-another-repository@v1.3
+        ACCESS_TOKEN: ${{'secrets.ACCESS_TOKEN'}}
+        BRANCH: master # The branch the action should deploy to.
+        FOLDER: allure-report # The folder the action should deploy.
+        TARGET_FOLDER: docs
+    # If your repo is private and you want upload your report to another repo uncomment and set credential 
+    # - name: Pushes to another repository
+    #   uses: cpina/github-action-push-to-another-repository@main
     #   if: always()
     #   env:
-    #     API_TOKEN_GITHUB: ${{ 'YOUR TOKEN' }} # Instruction where to get token is below
+    #     API_TOKEN_GITHUB: ${{ secrets.ACCESS_TOKEN }}
     #   with:
-    #     source-directory: "docs"
-    #     destination-github-username: "kushale2014@gmail.com" # Your username
-    #     destination-repository-name: "testwebdriverio" # Name of your repo
-    #     user-email: kushale2014@gmail.com # Your email
+    #     source-directory: 'docs'
+    #     destination-github-username: 'UserName'
+    #     destination-repository-name: 'RepoName'
+    #     user-email: some.email@gmail.com
     #     target-branch: main
