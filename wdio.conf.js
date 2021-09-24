@@ -23,11 +23,11 @@ const wdioConfig = {
             maxInstances: 2,
             browserName: 'chrome',
             acceptInsecureCerts: true
-        },
-        {
-            maxInstances: 2,
-            browserName: 'firefox',
         }
+        // {
+        //     maxInstances: 2,
+        //     browserName: 'firefox',
+        // }
     ],
     // Level of logging verbosity: trace | debug | info | warn | error | silent
     logLevel: 'warn',
@@ -37,9 +37,9 @@ const wdioConfig = {
     connectionRetryTimeout: 90000,
     connectionRetryCount: 3,
     services: [
-        ['chromedriver'],
-        ['firefox-profile'],
-        ['MicrosoftEdge']
+        ['chromedriver']
+        // ['firefox-profile']
+        // ['MicrosoftEdge']
     ],
     framework: 'mocha',
     // reporters: ['spec'],
