@@ -4,12 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx wdio wdio.conf.js",
-    "test:headless": "npx wdio wdio.chrome.headless.conf.js",
-    "allure:serve": "npx allure serve allure-results",
-    "allure:generate": "npx allure generate allure-results --clean",
-    "test:basic": "npx wdio run ./wdio.conf.js --spec basic.js",
-    "test:examples": "npx wdio run ./wdio.conf.js --spec example.e2e.js",
+    "test": "wdio wdio.conf.js",
+    "test:headless": "wdio wdio.chrome.headless.conf.js",
+    "allure:serve": "allure serve allure-results",
+    "allure:generate": "allure generate allure-results --clean",
+    "test:basic": "wdio run ./wdio.conf.js --spec basic.js",
+    "test:examples": "wdio run ./wdio.conf.js --spec example.e2e.js",
     "allure:gen": "allure generate allure-results",
     "allure:open": "allure open"
   },
